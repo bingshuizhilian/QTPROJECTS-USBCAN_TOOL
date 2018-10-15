@@ -2,7 +2,8 @@
 *.slo
 *.lo
 *.o
-*.a
+*.a 
+!/usbCanTool/libusb-1.0.22/MinGW32/static/libusb-1.0.a
 *.la
 *.lai
 *.so
