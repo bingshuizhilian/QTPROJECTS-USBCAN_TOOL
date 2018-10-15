@@ -6,11 +6,11 @@ ConfigUsbCan::ConfigUsbCan(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ConfigUsbCan)
 {
-    getUsbDeviceInfo();
-
     componentsAndLayoutInit();
 
-    this->setGeometry(750,350,0,0);
+    getUsbDeviceInfo();
+
+
 }
 
 ConfigUsbCan::~ConfigUsbCan(void)
@@ -22,10 +22,14 @@ void ConfigUsbCan::componentsAndLayoutInit(void)
 {
     ui->setupUi(this);
     //components
-    usbDevList = new QComboBox;
     okBtn = new QPushButton(tr("Apply"));
-    connect(usbDevList, &usbDevList->currentIndexChanged, this, &getUsbDeviceInfo);
+    connect(okBtn, &okBtn->clicked, this, &getUsbDeviceInfo);
     usbDevDescTbl = new QTableWidget(14, 2);
+
+    usbDevList = new QComboBox;
+//    connect(usbDevList, static_cast<void (QComboBox::*)(const QString&)>(&usbDevList->currentTextChanged), this, &getUsbDeviceInfo);
+//    connect(usbDevList, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &getUsbDeviceInfo);
+
 
     //Layout
     auto topLayout = new QHBoxLayout;
@@ -38,7 +42,7 @@ void ConfigUsbCan::componentsAndLayoutInit(void)
 
     this->setLayout(globleLayout);
     this->setWindowTitle("choose device");
-
+    this->setGeometry(750,350,0,0);
 }
 
 int ConfigUsbCan::getUsbDeviceInfo(void)
@@ -49,6 +53,8 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
     libusb_device *dev;
     int i = 0, j = 0;
     uint8_t path[8];
+    unsigned char usbInfoBuf[USB_INFO_MAX_LEN] = { 0 };
+    libusb_device_handle *devHandle = nullptr;
 
     r = libusb_init(NULL);
     if (r < 0)
@@ -68,8 +74,19 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
             return r;
         }
 
+        //devHandle = libusb_open_device_with_vid_pid(NULL, desc.idVendor, desc.idProduct);
+        libusb_open(dev,&devHandle);
+        if(0 != devHandle)
+        {
+            libusb_get_string_descriptor_ascii(devHandle, desc.iManufacturer, usbInfoBuf, USB_INFO_MAX_LEN);
+            usbDevList->addItem((const char *)usbInfoBuf);
+            memset(usbInfoBuf, 0, USB_INFO_MAX_LEN);
+        }
+
         if(desc.idVendor == USBCAN_VID && desc.idProduct == USBCAN_PID)
-            ;//usbDevHandle = devs[i];
+        {
+            //usbDevHandle = devs[i];
+        }
 
         printf("%04x:%04x (bus %d, device %d)",
             desc.idVendor, desc.idProduct,
@@ -90,6 +107,11 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
     libusb_exit(NULL);
 
     return 0;
+}
+
+void ConfigUsbCan::applyBtnPressed()
+{
+
 }
 
 

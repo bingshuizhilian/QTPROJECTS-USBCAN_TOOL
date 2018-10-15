@@ -26,6 +26,7 @@ private:
 private:
     const unsigned short USBCAN_VID = 0x4348;
     const unsigned short USBCAN_PID = 0x5537;
+    const unsigned int USB_INFO_MAX_LEN = 256;
 private:
     libusb_device_handle *usbDevHandle;
 
@@ -35,7 +36,10 @@ private:
 
 private:
     void componentsAndLayoutInit(void);
+
+private slots:
     int getUsbDeviceInfo(void);
+    void applyBtnPressed(void);
 };
 
 #endif // CONFIGUSBCAN_H
