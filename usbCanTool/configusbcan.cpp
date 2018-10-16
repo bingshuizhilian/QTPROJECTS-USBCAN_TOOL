@@ -28,7 +28,7 @@ void ConfigUsbCan::componentsAndLayoutInit(void)
 
     usbDevList = new QComboBox;
 //    connect(usbDevList, static_cast<void (QComboBox::*)(const QString&)>(&usbDevList->currentTextChanged), this, &getUsbDeviceInfo);
-//    connect(usbDevList, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &getUsbDeviceInfo);
+    connect(usbDevList, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &updateUsbInfo);
 
 
     //Layout
@@ -74,8 +74,8 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
             return r;
         }
 
-        //devHandle = libusb_open_device_with_vid_pid(NULL, desc.idVendor, desc.idProduct);
-        libusb_open(dev,&devHandle);
+        devHandle = libusb_open_device_with_vid_pid(NULL, desc.idVendor, desc.idProduct);
+//        libusb_open(dev,&devHandle);
         if(0 != devHandle)
         {
             libusb_get_string_descriptor_ascii(devHandle, desc.iManufacturer, usbInfoBuf, USB_INFO_MAX_LEN);
@@ -85,7 +85,7 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
 
         if(desc.idVendor == USBCAN_VID && desc.idProduct == USBCAN_PID)
         {
-            //usbDevHandle = devs[i];
+            usbDevHandle = devHandle;
         }
 
         printf("%04x:%04x (bus %d, device %d)",
@@ -102,6 +102,9 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
         printf("\n");
     }
 
+    if (devHandle)
+        libusb_close(devHandle);
+
     libusb_free_device_list(devs, 1);
 
     libusb_exit(NULL);
@@ -112,6 +115,13 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
 void ConfigUsbCan::applyBtnPressed()
 {
 
+}
+
+void ConfigUsbCan::updateUsbInfo()
+{
+    auto tmp = new QTableWidgetItem;
+    tmp->setText("abcd");
+    usbDevDescTbl->setItem(0,0,tmp);
 }
 
 

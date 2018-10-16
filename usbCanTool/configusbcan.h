@@ -40,6 +40,8 @@ private:
 private slots:
     int getUsbDeviceInfo(void);
     void applyBtnPressed(void);
+    void updateUsbInfo(void);
+
 };
 
 #endif // CONFIGUSBCAN_H
