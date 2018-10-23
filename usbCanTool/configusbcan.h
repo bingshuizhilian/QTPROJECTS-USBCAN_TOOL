@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QTableWidget>
+#include <QList>
 
 namespace Ui {
 class ConfigUsbCan;
@@ -28,7 +29,9 @@ private:
     const unsigned short USBCAN_PID = 0x5537;
     const unsigned int USB_INFO_MAX_LEN = 256;
 private:
-    libusb_device_handle *usbDevHandle;
+    libusb_device **libusbDevs;
+    QList<libusb_device_descriptor> libusbDevsDescs;
+    QList<QStringList> usbDevExInfos;
 
     QComboBox *usbDevList;
     QPushButton *okBtn;
