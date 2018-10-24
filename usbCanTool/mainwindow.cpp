@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "configusbcan.h"
 #include <QDebug>
 
 
@@ -9,10 +10,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ConfigUsbCan *a = new ConfigUsbCan(this);
+    chooseUsbDevDiag = new ConfigUsbCan(this);
 
-    a->exec();
+    //chooseUsbDevDiag->exec();
 
+    ui->textBrowser->append(chooseUsbDevDiag->settings().currentUsbDevExInfo.at(0));
+    ui->textBrowser->append(chooseUsbDevDiag->settings().currentUsbDevExInfo.at(1));
+    ui->textBrowser->append(chooseUsbDevDiag->settings().currentUsbDevExInfo.at(2));
 }
 
 MainWindow::~MainWindow()

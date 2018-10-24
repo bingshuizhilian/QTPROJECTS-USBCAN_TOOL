@@ -24,14 +24,21 @@ private:
     Ui::ConfigUsbCan *ui;
 
 //added by me
-private:
+public:
+    struct Settings
+    {
+        libusb_device_descriptor currentUsbDesc;
+        QStringList currentUsbDevExInfo;
+    };
     const unsigned short USBCAN_VID = 0x4348;
     const unsigned short USBCAN_PID = 0x5537;
     const unsigned int USB_INFO_MAX_LEN = 256;
+public:
+    Settings settings() const;
 private:
-    libusb_device **libusbDevs;
     QList<libusb_device_descriptor> libusbDevsDescs;
     QList<QStringList> usbDevExInfos;
+    Settings currentSettings;
 
     QComboBox *usbDevList;
     QPushButton *okBtn;
@@ -44,7 +51,6 @@ private slots:
     int getUsbDeviceInfo(void);
     void applyBtnPressed(void);
     void updateUsbInfo(void);
-
 };
 
 #endif // CONFIGUSBCAN_H

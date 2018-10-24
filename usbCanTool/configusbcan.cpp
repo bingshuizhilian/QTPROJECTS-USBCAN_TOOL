@@ -10,13 +10,16 @@ ConfigUsbCan::ConfigUsbCan(QWidget *parent) :
     componentsAndLayoutInit();
 
     getUsbDeviceInfo();
-
-
 }
 
 ConfigUsbCan::~ConfigUsbCan(void)
 {
     delete ui;
+}
+
+ConfigUsbCan::Settings ConfigUsbCan::settings() const
+{
+    return currentSettings;
 }
 
 void ConfigUsbCan::componentsAndLayoutInit(void)
@@ -53,6 +56,7 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
 {
     int r;
     ssize_t cnt;
+    libusb_device **libusbDevs;
     libusb_device *dev;
     int i = 0, j = 0;
     uint8_t path[8];
@@ -68,7 +72,7 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
     if (cnt < 0)
         return (int) cnt;
 
-    qDebug("-->%d<-- devices", cnt);
+    qDebug("-->%d devices<--", cnt);
 
     while ((dev = libusbDevs[i++]) != NULL)
     {
@@ -85,7 +89,7 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
 //        devHandle = libusb_open_device_with_vid_pid(NULL, desc.idVendor, desc.idProduct);
         ret = libusb_open(dev, &devHandle);
 
-        qDebug() << ret;
+        qDebug() << "usb dev open result(0 success):" << ret;
 
         if(LIBUSB_SUCCESS == ret)
         {
@@ -158,7 +162,7 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
                     }
                 }
             }
-            printf("\n");
+            printf("*****************************\n");
             libusb_free_config_descriptor(config);
 
             if(devHandle)
@@ -178,7 +182,7 @@ int ConfigUsbCan::getUsbDeviceInfo(void)
 
 void ConfigUsbCan::applyBtnPressed()
 {
-
+    hide();
 }
 
 void ConfigUsbCan::updateUsbInfo()
@@ -212,8 +216,6 @@ void ConfigUsbCan::updateUsbInfo()
     tItem[22].setText("0x" + QString::number(libusbDevsDescs.at(usbDevList->currentIndex()).idProduct, 16));
     tItem[23].setText("0x" + QString::number(libusbDevsDescs.at(usbDevList->currentIndex()).bcdDevice, 16));
 
-
-
     tItem[24].setText(usbDevExInfos.at(usbDevList->currentIndex()).at(0));
     tItem[25].setText(usbDevExInfos.at(usbDevList->currentIndex()).at(1));
     tItem[26].setText(usbDevExInfos.at(usbDevList->currentIndex()).at(2));
@@ -226,6 +228,9 @@ void ConfigUsbCan::updateUsbInfo()
         usbDevDescTbl->item(cnt,0)->setFlags(usbDevDescTbl->item(cnt,0)->flags() & ~Qt::ItemIsEditable);
         usbDevDescTbl->item(cnt,1)->setFlags(usbDevDescTbl->item(cnt,1)->flags() & ~Qt::ItemIsEditable);
     }
+
+    currentSettings.currentUsbDesc = libusbDevsDescs.at(usbDevList->currentIndex());
+    currentSettings.currentUsbDevExInfo = usbDevExInfos.at(usbDevList->currentIndex());
 }
 
 

@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "configusbcan.h"
+
+class ConfigUsbCan;
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +19,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+private:
+    ConfigUsbCan *chooseUsbDevDiag;
 };
 
 #endif // MAINWINDOW_H
