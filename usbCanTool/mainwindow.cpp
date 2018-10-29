@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     chooseUsbDevDiag = new ConfigUsbCan(this);
 
-    //chooseUsbDevDiag->exec();
+
 
     ui->textBrowser->append(chooseUsbDevDiag->settings().currentUsbDevExInfo.at(0));
     ui->textBrowser->append(chooseUsbDevDiag->settings().currentUsbDevExInfo.at(1));
@@ -24,3 +24,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_m_btnUsbDevConfig_clicked()
+{
+    chooseUsbDevDiag->exec();
+}
